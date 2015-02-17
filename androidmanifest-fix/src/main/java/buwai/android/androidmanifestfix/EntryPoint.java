@@ -28,7 +28,6 @@ public class EntryPoint {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("------ 开始修复 ------");
 		try {
 			BasicParser parser = new BasicParser();
 			CommandLine cl = parser.parse(options, args);
@@ -51,13 +50,14 @@ public class EntryPoint {
 				usage();
 			}
 
+			System.out.println("------ 开始修复 ------");
 			fix(in, out);
+			System.out.println("------ 修复完成 ------");
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("------ 修复完成 ------");
 	}
 
 	private static void fix(File in, File out) throws IOException {
@@ -147,13 +147,15 @@ public class EntryPoint {
 												String realNs = null == ns ? null : AxmlNameHelper.ns;
 												super.attr(realNs, realName, resourceId, type, obj);
 											}
-											
+
 											public NodeVisitor child(String ns, String name) {
 												if (name.equals("intent-filter") || name.equals("meta-data")) {
+													// 修复intent-filter、meta-data标签的属性。
 													return new NodeVisitor(super.child(ns, name)) {
-														public void attr(String ns, String name, int resourceId, int type, Object obj) {
-															String realName = -1 == resourceId ? name : AxmlNameHelper.get(
-																	resourceId).getName();
+														public void attr(String ns, String name, int resourceId,
+																int type, Object obj) {
+															String realName = -1 == resourceId ? name : AxmlNameHelper
+																	.get(resourceId).getName();
 															String realNs = null == ns ? null : AxmlNameHelper.ns;
 															super.attr(realNs, realName, resourceId, type, obj);
 														}
